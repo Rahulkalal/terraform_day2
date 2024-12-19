@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 # S3 Bucket for Terraform state
-resource "aws_s3_bucket" "tf-state-123" {
+resource "aws_s3_bucket" "tf_state" {
   bucket        = "unique-terraform-state-bucket-hcl-12345"
   acl           = "private"
 
@@ -14,7 +14,7 @@ resource "aws_s3_bucket" "tf-state-123" {
 
 # S3 Bucket Encryption
 resource "aws_s3_bucket_server_side_encryption_configuration" "tf_state_sse" {
-  bucket = aws_s3_bucket.tf-state-123.id
+  bucket = aws_s3_bucket.tf_state.id
 
   rule {
     apply_server_side_encryption_by_default {
