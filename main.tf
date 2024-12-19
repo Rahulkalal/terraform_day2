@@ -12,6 +12,6 @@ terraform {
     region         = "ap-southeast-2"  # Region where your S3 bucket and DynamoDB table are located
     encrypt        = true  # Enable encryption for the state file
     versioning     = true  # Enable versioning for state tracking
-    dynamodb_table = "terraform-state-locks"  # DynamoDB table for state locking
+    dynamodb_table = "terraform-state-locks-hcl"  # DynamoDB table for state locking
   }
 }
