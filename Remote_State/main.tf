@@ -2,7 +2,7 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "aws_s3_bucket" "tf-state" {
+resource "aws_s3_bucket" "tf-state-123" {
   bucket        = "my-terraform-state-bucket-hcl-handson"
   acl           = "private"
   versioning {
