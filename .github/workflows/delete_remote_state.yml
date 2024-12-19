@@ -1,4 +1,4 @@
-name: Terraform Remote s3 deletion
+name: Terraform Remote_State_deletion
 
 on:
   workflow_dispatch:
