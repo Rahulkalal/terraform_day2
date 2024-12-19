@@ -1,0 +1,55 @@
+name: Multi-Tenancy Destroy Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Terraform workspace to deploy (e.g., dev, staging, prod)"
+        required: true
+        default: "dev"
+
+jobs:
+  terraform:
+    name: Deploy Infrastructure
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: "us-east-1"
+      TF_ACTION_WORKING_DIR: "./multitenancy"
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.7
+
+      # Step 3: Configure AWS Credentials
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # Step 4: Initialize Terraform Backend
+      - name: Terraform Init
+        run: |
+          terraform init \
+            -reconfigure \
+            -backend-config="key=multitenancy/${{ github.event.inputs.environment }}/terraform.tfstate"
+        working-directory: ${{ env.TF_ACTION_WORKING_DIR }}
+
+      # Step 5: Select or Create Workspace
+      - name: Select Terraform Workspace
+        run: |
+          terraform workspace select ${{ github.event.inputs.environment }} || terraform workspace new ${{ github.event.inputs.environment }}
+        working-directory: ${{ env.TF_ACTION_WORKING_DIR }}
+
+      # Step 7: Run Terraform destroy
+      - name: Terraform destroy
+        run: terraform destroy -auto-approve
+        working-directory: ${{ env.TF_ACTION_WORKING_DIR }}
